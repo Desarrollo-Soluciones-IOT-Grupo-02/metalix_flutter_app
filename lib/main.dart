@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:metalixmovil/screens/home_layout.dart';
 import 'screens/login_screen.dart';
 
 void main() {
@@ -12,12 +13,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Metalix Login',
+      title: 'Metalix App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1FC7DB)),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+
+      // 👇 Rutas definidas
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
+      },
     );
   }
 }

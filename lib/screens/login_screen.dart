@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -97,24 +98,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 28),
 
                     // 🔹 Botón login
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: mainColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mainColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      onPressed: () {
+                        // 🚀 Navegar al DashboardScreen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                        );
+                      },
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
-                    const SizedBox(height: 24),
 
                     // 🔹 Link de registro
                     Row(
