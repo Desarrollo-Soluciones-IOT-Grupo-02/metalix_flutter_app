@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:metalixmovil/controllers/auth_controller.dart';
 import 'home_layout.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,8 +11,53 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
+  bool isLoading = false;
+
   final Color mainColor = const Color(0xFF1FC7DB);
 
+  // Controllers
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // ============================================
+  // 🔹 LOGIN LOGIC (conectado al AuthController)
+  // ============================================
+  Future<void> _performLogin() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email and password are required")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final user = await AuthController.login(email, password);
+
+      setState(() => isLoading = false);
+
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login failed: $e")),
+      );
+    }
+  }
+
+  // ============================================
+  // 🔹 UI
+  // ============================================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,8 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // 🔹 Email
+                    // 🔹 Email Field
                     TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.email_outlined, color: mainColor),
@@ -73,8 +120,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // 🔹 Password
+                    // 🔹 Password Field
                     TextField(
+                      controller: passwordController,
                       obscureText: hidePassword,
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -85,9 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: mainColor,
                           ),
                           onPressed: () {
-                            setState(() {
-                              hidePassword = !hidePassword;
-                            });
+                            setState(() => hidePassword = !hidePassword);
                           },
                         ),
                         border: OutlineInputBorder(
@@ -101,22 +147,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: mainColor,
+                        minimumSize: const Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {
-                        // 🚀 Navegar al DashboardScreen
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                        );
-                      },
-                      child: const Text(
+                      onPressed: isLoading ? null : _performLogin,
+                      child: isLoading
+                          ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : const Text(
                         'Sign In',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
+
+                    const SizedBox(height: 12),
 
                     // 🔹 Link de registro
                     Row(
