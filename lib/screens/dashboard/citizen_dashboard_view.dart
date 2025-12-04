@@ -12,7 +12,7 @@ class CitizenDashboardView extends StatelessWidget {
         'icon': Icons.stars,
         'color': mainColor,
         'change': '+12%',
-        'value': '1,240',
+        'value': '257',
         'label': 'Total Points',
       },
       {
@@ -26,7 +26,7 @@ class CitizenDashboardView extends StatelessWidget {
         'icon': Icons.card_giftcard,
         'color': Colors.orange,
         'change': '+5%',
-        'value': '24',
+        'value': '1',
         'label': 'Rewards Earned',
       },
       {

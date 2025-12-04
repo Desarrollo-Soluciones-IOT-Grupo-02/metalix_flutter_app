@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class AppSidebar extends StatelessWidget {
   final Function(String)? onItemSelected;
   final String currentItem;
+  final String role;
 
   const AppSidebar({
     super.key,
     this.onItemSelected,
     required this.currentItem,
+    required this.role,
   });
 
   @override
@@ -17,47 +19,58 @@ class AppSidebar extends StatelessWidget {
     return SizedBox(
       width: 260,
       child: Drawer(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(16),
-            bottomRight: Radius.circular(16),
-          ),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DrawerHeader(
               decoration: BoxDecoration(color: mainColor),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.recycling, color: Colors.white, size: 36),
-                    SizedBox(width: 10),
-                    Text(
-                      'Metalix',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.recycling, color: Colors.white, size: 36),
+                  SizedBox(width: 10),
+                  Text(
+                    'Metalix',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
-            // 🔹 Opciones principales
-            _buildItem(Icons.dashboard_outlined, 'Dashboard', context, mainColor),
-            _buildItem(Icons.recycling_outlined, 'Waste Collections', context, mainColor),
-            _buildItem(Icons.card_giftcard_outlined, 'Rewards', context, mainColor),
-            _buildItem(Icons.settings_outlined, 'Settings', context, mainColor),
+            // -----------------------------------
+            // CITIZEN MENU
+            // -----------------------------------
+            if (role == "CITIZEN") ...[
+              _buildItem(Icons.dashboard_outlined, 'Dashboard', context, mainColor),
+              _buildItem(Icons.recycling_outlined, 'Waste Collections', context, mainColor),
+              _buildItem(Icons.card_giftcard_outlined, 'Rewards', context, mainColor),
 
-            const Divider(),
+              // 👇 Aquí reemplazamos Settings → My Cards
+              _buildItem(Icons.credit_card, 'My Cards', context, mainColor),
 
-            // 🔹 Opciones inferiores
-            _buildItem(Icons.account_circle_outlined, 'Profile', context, mainColor),
+              const Divider(),
+              _buildItem(Icons.account_circle_outlined, 'Profile', context, mainColor),
+            ],
+
+            // -----------------------------------
+            // MUNICIPALITY ADMIN MENU
+            // -----------------------------------
+            if (role == "SYSTEM_ADMIN") ...[
+              _buildItem(Icons.dashboard_outlined, 'Dashboard', context, mainColor),
+              _buildItem(Icons.business_outlined, 'Municipality', context, mainColor),
+              _buildItem(Icons.monitor_heart_outlined, 'Monitoring', context, mainColor),
+              _buildItem(Icons.settings_outlined, 'Settings', context, mainColor),
+              const Divider(),
+              _buildItem(Icons.admin_panel_settings, 'Admin', context, mainColor),
+            ],
+
+            const Spacer(),
+
+            // LOGOUT
             _buildItem(Icons.logout, 'Logout', context, mainColor, isLogout: true),
           ],
         ),
@@ -78,7 +91,7 @@ class AppSidebar extends StatelessWidget {
       leading: Icon(
         icon,
         color: isLogout
-            ? Colors.redAccent
+            ? Colors.red
             : isSelected
             ? color
             : Colors.grey[700],
@@ -87,17 +100,14 @@ class AppSidebar extends StatelessWidget {
         title,
         style: TextStyle(
           color: isLogout
-              ? Colors.redAccent
+              ? Colors.red
               : isSelected
               ? color
               : Colors.black87,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
         ),
       ),
-      tileColor: isSelected
-          ? color.withOpacity(0.1)
-          : Colors.transparent, // 👈 fondo suave para la opción activa
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      tileColor: isSelected ? color.withOpacity(0.1) : null,
       onTap: () => onItemSelected?.call(title),
     );
   }
